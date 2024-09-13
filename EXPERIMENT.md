@@ -20,16 +20,16 @@
 
 #### 1.案例内容
 
-设计一节Servlet入门实验课程，我们可以通过一个实际案例来综合展示`ServletContext`的数据共享、`HttpServletResponse`的请求重定向（Redirect）和请求转发（Forward）的功能。以下是一个基于Java Servlet的简单案例设计，旨在帮助学生理解这些概念并动手实践。
+通过一个实际案例来综合展示`Servlet`的两种配置方式、`ServletContext`的数据共享、`HttpServletResponse`的请求重定向（Redirect）和请求转发（Forward）的功能。以下是一个基于Java Servlet的简单案例设计，旨在帮助学生理解这些概念并动手实践。
 
-实现一个简单的用户登录系统，使用`ServletContext`共享登录状态（如用户ID）。登录成功后，通过请求转发将用户导向欢迎页面。如果用户未登录尝试直接访问欢迎页面，则通过请求重定向回到登录页面。
+实现一个简单的用户登录系统，使用`ServletContext`共享登录状态（如用户username）。登录成功后，通过请求转发将用户导向欢迎页面。如果用户未登录尝试直接访问欢迎页面，则通过请求重定向回到登录页面。
 
 #### 2.案例分析
 
 ##### （1）. 环境准备
 
 - 确保已经安装了Java开发环境（JDK）和Tomcat服务器。
-- 使用IDE（如Eclipse, IntelliJ IDEA等）创建一个新的动态Web项目。
+- 使用 IntelliJ IDEA创建一个新的动态Web项目。
 
 ##### （2）. 创建Servlet
 
@@ -43,46 +43,65 @@
 
 ##### （4）. 实现LoginServlet
 
+通过注解的方式配置LoginServlet
+
 ```java
-@WebServlet("/login")  
-public class LoginServlet extends HttpServlet {  
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {  
-        String username = request.getParameter("username");  
-        String password = request.getParameter("password");  
-  
-        // 简单的验证逻辑，实际应连接数据库  
-        if ("admin".equals(username) && "123456".equals(password)) {  
-            // 登录成功，将用户ID存入ServletContext  
-            getServletContext().setAttribute("userId", username);  
-            // 请求转发到欢迎页面  
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/WelcomeServlet");  
-            dispatcher.forward(request, response);  
-        } else {  
-            // 登录失败，重定向回登录页面  
-            response.sendRedirect(this.getServletContext().getContextPath() + "login.jsp");  
-        }  
-    }  
+package com.dingli.chapter2experiment;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@WebServlet(urlPatterns = "/LoginServlet")
+public class LoginServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        // 简单的验证逻辑，实际应连接数据库
+        if ("admin".equals(username) && "123456".equals(password)) {
+            // 登录成功，将用户ID存入ServletContext
+            this.getServletContext().setAttribute("username", username);
+            // 请求转发到欢迎页面
+            req.getRequestDispatcher("/welcomeServlet").forward(req, resp);
+        } else {
+            // 登录失败，重定向回登录页面
+            resp.sendRedirect(this.getServletContext().getContextPath() + "/login.jsp?error=true");
+        }
+    }
 }
 ```
 
 ##### （5）. 实现WelcomeServlet
 
+通过XML文件的方式配置WelcomeServlet
+
 ```java
-@WebServlet("/WelcomeServlet")  
-public class WelcomeServlet extends HttpServlet {  
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {  
-        // 检查用户是否已登录  
-        String userId = (String) getServletContext().getAttribute("userId");  
-        if (userId == null) {  
-            // 用户未登录，重定向到登录页面  
-            response.sendRedirect("login.jsp");  
-        } else {  
-            // 用户已登录，显示欢迎页面  
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/welcome.jsp");  
-            dispatcher.forward(request, response);  
-        }  
-    }  
+package com.dingli.chapter2experiment;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+public class WelcomeServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // 记录用户登录历史
+        System.out.println("用户：" + this.getServletContext().getAttribute("username") + " 已成功登录！");
+        // 转发到欢迎页面
+        req.getRequestDispatcher("/welcome.jsp").forward(req, resp);
+    }
 }
+
 ```
 
 ##### （6）. 创建JSP页面
@@ -90,20 +109,33 @@ public class WelcomeServlet extends HttpServlet {
 **login.jsp**
 
 ```html
-<form action="login" method="post">  
-    Username: <input type="text" name="username"><br>  
-    Password: <input type="password" name="password"><br>  
-    <input type="submit" value="Login">  
-</form>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Title</title>
+</head>
+<body>
+  <form action="/chapter2experiment/LoginServlet" method="post">
+    Username:<input type="text" name="username"/><br/>
+    Password:<input type="password" name="password"/><br/>
+    <input type="submit" value="Login"/>
+  </form>
+</body>
+</html>
+
 ```
 
 **welcome.jsp**
 
 ```html
-<html>  
-<body>  
-    <h1>Welcome, <%=((String)application.getAttribute("userId")) %></h1>  
-</body>  
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Title</title>
+</head>
+<body>
+  <h1>Welcome, <%=((String)application.getAttribute("username")) %></h1>
+</body>
 </html>
 ```
 
@@ -113,8 +145,6 @@ public class WelcomeServlet extends HttpServlet {
 
 - 将项目部署到Tomcat服务器。
 - 访问`http://localhost:8080/YourProjectName/login.jsp`进行测试。
-
-通过此实验，学生将能够理解`ServletContext`在跨Servlet间共享数据的作用，以及`HttpServletResponse`的`sendRedirect`和`RequestDispatcher`的`forward`方法在处理请求重定向和请求转发时的不同用法。
 
 
 
