@@ -23,9 +23,9 @@ public class LoginServlet extends HttpServlet {
         // 简单的验证逻辑，实际应连接数据库
         if ("admin".equals(username) && "123456".equals(password)) {
             // 登录成功，将用户ID存入ServletContext
-            this.getServletContext().setAttribute("userId", username);
+            this.getServletContext().setAttribute("username", username);
             // 请求转发到欢迎页面
-            req.getRequestDispatcher("/WelcomeServlet").forward(req, resp);
+            req.getRequestDispatcher("/welcomeServlet").forward(req, resp);
         } else {
             // 登录失败，重定向回登录页面
             resp.sendRedirect(this.getServletContext().getContextPath() + "/login.jsp?error=true");

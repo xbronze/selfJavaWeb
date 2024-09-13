@@ -11,6 +11,6 @@
     <title>Title</title>
 </head>
 <body>
-  <h1>Welcome, <%=((String)application.getAttribute("userId")) %></h1>
+  <h1>Welcome, <%=((String)application.getAttribute("username")) %></h1>
 </body>
 </html>
