@@ -17,6 +17,7 @@
         <module>chapter3</module>
         <module>chapter4</module>
         <module>chapter5</module>
+        <module>LoginAndRegister</module>
     </modules>
 
     <properties>
