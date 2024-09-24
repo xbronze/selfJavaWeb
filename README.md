@@ -1,3 +1,10 @@
+- [`javax.servlet` 和 `jakarta.servlet`的关系](#javaxservlet-和-jakartaservlet的关系)
+- [使用`jakarta.servlet`注意事项](#使用jakartaservlet注意事项)
+- [继承`HttpServlet`的方式属于*模板方法设计模式*](#继承httpservlet的方式属于模板方法设计模式)
+- [PrintWriter类的`write()`方法、`print()`方法、`println()`方法的不同](#printwriter类的write方法print方法println方法的不同)
+- [`response.setContentType("text/html; charset=utf-8") `会使`PrintWriter.println()`不能换行](#responsesetcontenttypetexthtml-charsetutf-8-会使printwriterprintln不能换行)
+- [关于HTTP的重定向](#关于http的重定向)
+- [JSP的\<%@include%\>指令和\<jsp:include\>动作元素的区别](#jsp的include指令和jspinclude动作元素的区别)
 
 
 ## `javax.servlet` 和 `jakarta.servlet`的关系
