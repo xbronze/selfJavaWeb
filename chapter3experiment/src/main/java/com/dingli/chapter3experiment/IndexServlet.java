@@ -1,4 +1,4 @@
-package com.dingli.chapter3.login;
+package com.dingli.chapter3experiment;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,7 +20,7 @@ public class IndexServlet extends HttpServlet {
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            resp.getWriter().println("您还没有登录，请<a href='/chapter3/login.jsp'>登录</a>");
+            resp.getWriter().println("您还没有登录，请<a href='" + this.getServletContext().getContextPath() + "/login.jsp'>登录</a>");
         } else {
             resp.getWriter().println("您已登录，欢迎你，" + user.getUsername() + "！");
             resp.getWriter().println("<a href='" + this.getServletContext().getContextPath() + "/LogoutServlet'>退出</a>");
