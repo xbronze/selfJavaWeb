@@ -26,7 +26,7 @@ public class IndexServlet extends HttpServlet {
             resp.getWriter().println("<a href='" + this.getServletContext().getContextPath() + "/LogoutServlet'>退出</a>");
             Cookie cookie = new Cookie("JSESSIONID", session.getId());
             cookie.setMaxAge(60); // 保存一分钟
-            cookie.setPath("/chapter3");
+            cookie.setPath("/chapter3experiment");
             resp.addCookie(cookie);
         }
     }
