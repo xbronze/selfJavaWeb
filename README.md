@@ -136,3 +136,70 @@ JSP多线程的执行方式之所以能够极大降低对系统资源的消耗�
 - 因此，在JSP编程中，需要谨慎使用实例变量，并尽量使用局部变量或线程安全的集合类来避免线程安全问题。
 
 综上所述，JSP多线程的执行方式通过线程共享资源、多线程并发处理、减少资源开销、高效的资源管理和谨慎处理线程安全问题等手段，可以极大降低对系统资源的消耗，提高系统的并发性能和响应速度。
+
+
+## Servlet接口的HttpServletRequest对象能直接接收json数据吗?
+
+HttpServletRequest 对象本身并不直接支持接收 JSON 数据。HttpServletRequest 主要用于处理 HTTP 请求，包括获取请求参数、请求头、请求方法等信息。当客户端（如微信小程序）发送一个包含 JSON 数据的 POST 请求时，这些数据通常作为请求体（request body）发送。
+
+要在 Servlet 中接收 JSON 数据，你需要做以下几件事情：
+
+- 读取请求体：使用 HttpServletRequest 的 getReader() 方法获取一个 BufferedReader，然后读取请求体中的字符流。这通常是一个包含 JSON 数据的字符串。
+- 解析 JSON 数据：使用 JSON 解析库（如 Jackson、Gson 或 org.json）将读取到的 JSON 字符串解析为 Java 对象。
+
+下面是一个简单的示例，展示了如何在 Servlet 中接收和解析 JSON 数据：
+
+```java
+import java.io.BufferedReader;  
+import java.io.IOException;  
+import javax.servlet.ServletException;  
+import javax.servlet.annotation.WebServlet;  
+import javax.servlet.http.HttpServlet;  
+import javax.servlet.http.HttpServletRequest;  
+import javax.servlet.http.HttpServletResponse;  
+  
+import com.fasterxml.jackson.databind.JsonNode;  
+import com.fasterxml.jackson.databind.ObjectMapper;  
+  
+@WebServlet("/receiveJson")  
+public class JsonReceiverServlet extends HttpServlet {  
+    private static final long serialVersionUID = 1L;  
+  
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {  
+        // 创建一个ObjectMapper实例，用于解析JSON数据  
+        ObjectMapper objectMapper = new ObjectMapper();  
+  
+        // 读取请求体中的JSON数据  
+        BufferedReader reader = request.getReader();  
+        StringBuilder sb = new StringBuilder();  
+        String line;  
+        while ((line = reader.readLine()) != null) {  
+            sb.append(line);  
+        }  
+        String jsonString = sb.toString();  
+  
+        // 解析JSON数据为JsonNode对象（或者你可以直接解析为自定义的Java对象）  
+        JsonNode jsonNode = objectMapper.readTree(jsonString);  
+  
+        // 从JsonNode对象中提取数据（这里只是示例，具体取决于你的JSON结构）  
+        String username = jsonNode.get("username").asText();  
+        String email = jsonNode.get("email").asText();  
+  
+        // ... 在这里处理解析后的数据  
+  
+        // 设置响应内容类型和状态码  
+        response.setContentType("application/json");  
+        response.setStatus(HttpServletResponse.SC_OK);  
+  
+        // 构建响应数据（这里只是示例）  
+        String responseJson = "{\"message\":\"JSON data received successfully\"}";  
+  
+        // 写入响应数据到响应体  
+        response.getWriter().write(responseJson);  
+    }  
+}
+```
+
+在这个示例中，我们创建了一个名为 JsonReceiverServlet 的 Servlet，它处理 POST 请求并读取请求体中的 JSON 数据。我们使用 Jackson 库来解析 JSON 数据，并将其转换为 JsonNode 对象（你也可以直接将其解析为自定义的 Java 对象）。然后，我们从 JsonNode 对象中提取数据，并构建响应数据返回给客户端。
+
+> 请注意，你需要将 Jackson 库（或其他你选择的 JSON 解析库）添加到你的项目依赖中。如果你使用的是 Maven，你可以在 pom.xml 文件中添加相应的依赖。
