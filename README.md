@@ -203,3 +203,78 @@ public class JsonReceiverServlet extends HttpServlet {
 在这个示例中，我们创建了一个名为 JsonReceiverServlet 的 Servlet，它处理 POST 请求并读取请求体中的 JSON 数据。我们使用 Jackson 库来解析 JSON 数据，并将其转换为 JsonNode 对象（你也可以直接将其解析为自定义的 Java 对象）。然后，我们从 JsonNode 对象中提取数据，并构建响应数据返回给客户端。
 
 > 请注意，你需要将 Jackson 库（或其他你选择的 JSON 解析库）添加到你的项目依赖中。如果你使用的是 Maven，你可以在 pom.xml 文件中添加相应的依赖。
+
+## 关于BufferedReader
+
+#### 1、什么是 BufferedReader ？
+
+BufferedReader 是一个缓冲字符输入流，该流可以对 FileRead 进行包装，提供一个缓存数组，一次将数据按照一定规则读取到缓存区中，输入流每次读取文件数据时都需要将数据进行字符编码，而 BufferedReader 的出现，降低了输入流访问数据源的次数，将一定大小的数据一次读取到缓存区并进行字符编码，从而提高 IO 的效率。
+
+#### 2、为什么使用 BufferedReader ？
+
+BufferedReader 从字符输入流中读取文本，缓冲字符，以便有效地读取字符、数组和行。可以指定缓冲区大小，也可以使用默认大小（8192）。对于大多数用途，默认值足够大。
+一般来说，对Reader发出的每个读请求都会导致对底层字符或字节流发出相应的读请求。因此，建议将 BufferedReader 封装在任何 read() 操作可能代价高昂的 Reader(如FileReaders和InputStreamReaders ) 周围。
+例如：
+
+```java
+BufferedReader in = new BufferedReader(new FileReader("foo.in"));
+```
+
+将缓冲来自指定文件的输入。如果没有缓冲，每次调用 read() 或 readLine() 都可能导致从文件中读取字节，转换为字符，然后返回，这可能非常低效。
+使用DataInputStream进行文本输入的程序可以通过使用适当的BufferedReader替换每个DataInputStream来进行本地化。
+
+#### 3、BufferedReader 的构造函数
+
+```java
+/**
+ * Creates a buffering character-input stream that uses an input buffer of
+ * the specified size.
+ *
+ * @param  in   A Reader
+ * @param  sz   Input-buffer size
+ *
+ * @exception  IllegalArgumentException  If {@code sz <= 0}
+ */
+public BufferedReader(Reader in, int sz) {
+    super(in);
+    if (sz <= 0)
+        throw new IllegalArgumentException("Buffer size <= 0");
+    this.in = in;
+    cb = new char[sz];
+    nextChar = nChars = 0;
+}
+
+/**
+ * Creates a buffering character-input stream that uses a default-sized
+ * input buffer.
+ *
+ * @param  in   A Reader
+ */
+public BufferedReader(Reader in) {
+    this(in, defaultCharBufferSize);
+}
+
+```
+
+构造函数简析：
+
+```java
+public BufferedReader(Reader in, int sz); // 创建一个BufferedRead 缓冲字符流对象，使用指定大小的缓存区。
+public BufferedReader(Reader in); // 创建一个BufferedRead 缓冲字符流对象，使用默认大小（8192）的缓存区。
+
+```
+
+#### 4、BufferedReader 的公共方法
+
+```java
+int read();  // 读取单个字符。
+int read(char[] cbuf, int off, int len);  // 将指定范围内的字符读入数组。
+String readLine();  // 读取一个文本行。
+boolean    ready();  // 判断此流是否可读。
+void reset();  // 将流重置到最新的标记。
+long skip(long n);  // 跳过字符。
+void close(); // 关闭该流并释放与之关联的所有资源。
+void mark(int readAheadLimit); // 标记流中的当前位置。
+boolean markSupported(); // 判断此流是否支持 mark() 操作（它一定支持）。
+
+```
