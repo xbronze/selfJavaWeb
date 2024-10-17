@@ -17,7 +17,6 @@
         mySession.setAttribute("username", username);
         response.sendRedirect("welcome.jsp");
     } else {
-        System.out.println("用户名或密码错误");
         response.sendRedirect("index.jsp");
     }
 %>
