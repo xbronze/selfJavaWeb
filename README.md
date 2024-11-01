@@ -278,3 +278,18 @@ void mark(int readAheadLimit); // 标记流中的当前位置。
 boolean markSupported(); // 判断此流是否支持 mark() 操作（它一定支持）。
 
 ```
+
+## el表达式不生效问题
+
+修改web.xml，改成新的，要与Tomcat中的web.xml的版本一致。原因是Servlet2.4版本前默认不支持el表达式。
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                      http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+</web-app>
+
+```
