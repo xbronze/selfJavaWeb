@@ -24,11 +24,13 @@ public class ControllerServlet extends HttpServlet {
             // 获取用户注册时表单提交的参数信息
             String name = request.getParameter("name");
             String password = request.getParameter("password");
+            String password2 = request.getParameter("password2");
             String email = request.getParameter("email");
             // 将获取的参数封装到注册表单相关的RegisterFormBean类中
             RegisterFormBean formBean = new RegisterFormBean();
             formBean.setName(name);
             formBean.setPassword(password);
+            formBean.setPassword2(password2);
             formBean.setEmail(email);
             // 验证参数填写是否符合要求，不符合，转发到register.jsp重新填写，
             if (!formBean.validate()) {

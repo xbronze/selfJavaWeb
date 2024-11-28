@@ -1,5 +1,7 @@
 package com.dingli.chapter7experiment;
 
+import com.dingli.chapter7experiment.util.DBUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +22,15 @@ public class RegisterFormBean {
 
     public boolean validate() {
         boolean flag = true;
+        if (DBUtil.getInstance().getUser(name) != null) {
+            errors.put("name", "用户名已存在");
+            flag = false;
+        }
+        // 比较两次输入的密码是否一样
+        if (!password.equals(password2)) {
+            errors.put("password2", "两次输入的密码不匹配");
+            flag = false;
+        }
         // 此处只展示了对email格式的校验采用了正则表达式，其他省略
         if (email == null || email.trim().equals("")) {
             errors.put("email", "请输入邮箱");

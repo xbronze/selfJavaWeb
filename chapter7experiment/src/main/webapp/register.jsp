@@ -22,12 +22,12 @@
         <div>
             <div class="ch">密码:</div>
             <div class="ip">
-                <input type="text" name=“password”> <span>${formBean.errors.password}</span></div>
+                <input type="text" name="password" value="${formBean.password}"> <span>${formBean.errors.password}</span></div>
         </div>
         <div>
             <div class="ch">确认密码:</div>
             <div class="ip">
-                <input type="text" name="password2"><span>${formBean.errors.password2}</span></div>
+                <input type="text" name="password2" value="${formBean.password2}"><span>${formBean.errors.password2}</span></div>
         </div>
         <div>
             <div class="ch">邮箱:</div>
