@@ -24,6 +24,7 @@
         <module>chapter6experiment</module>
         <module>chapter7</module>
         <module>chapter7experiment</module>
+        <module>chapter8</module>
         <module>LoginAndRegister</module>
         <module>miniProgram</module>
     </modules>
